@@ -26,7 +26,7 @@ final class ResultAggregate implements ResultInterface
         $this->value = $value;
     }
 
-    public function push(ResultInterface $result)
+    public function push(ResultInterface $result) : void
     {
         $this->results[] = $result;
     }
@@ -66,9 +66,9 @@ final class ResultAggregate implements ResultInterface
         return $this->value;
     }
 
-    private function assertAggregateNotEmpty()
+    private function assertAggregateNotEmpty() : void
     {
-        if (0 === count($this->results)) {
+        if (empty($this->results)) {
             throw MissingResultsException::forClass(self::class);
         }
     }

@@ -13,7 +13,7 @@ use Zend\DataValidator\ResultInterface;
 
 class InvalidCallbackResultException extends RuntimeException implements ExceptionInterface
 {
-    public static function forType($result)
+    public static function forType($result) : self
     {
         return new self(sprintf(
             'Invalid result returned from %s; must be a %s instance or boolean; received %s',
