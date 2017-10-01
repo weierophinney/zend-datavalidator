@@ -52,12 +52,13 @@ class BarcodeTest extends TestCase
         $this->assertInstanceOf($expectedResult, $barcode->getAdapter());
     }
 
-    // public function testNoneExisting()
-    // {
-    //     $this->expectException(InvalidArgumentException::class);
-    //     $this->expectExceptionMessage('not found');
-    //     $barcode = new Barcode('\Zend\Validate\BarcodeTest\NonExistentClassName');
-    // }
+    public function testNoneExisting()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('not found');
+        $barcode = new Barcode('\Zend\Validate\BarcodeTest\NonExistentClassName');
+        $barcode->getAdapter();
+    }
 
     public function testSetCustomAdapter()
     {
