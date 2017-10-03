@@ -3,6 +3,8 @@ site_dir: docs/html
 pages:
     - index.md
     - Introduction: intro.md
+    - Validators:
+      - UUID: validators/uuid.md
 site_name: Component Name Goes Here
 site_description: 'Component Description goes here'
 repo_url: 'https://github.com/zendframework/zend-datavalidator'
