@@ -25,7 +25,7 @@ The `Uuid` validator has no additional options.
 
 ```php
 $validator = new Zend\DataValidator\Uuid();
-$result = $validator->isValid($uuid);
+$result = $validator->validate($uuid);
 
 if ($result->isValid()) {
     // UUID was valid
