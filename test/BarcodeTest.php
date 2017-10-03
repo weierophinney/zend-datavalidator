@@ -1,10 +1,7 @@
 <?php
-declare(strict_types=1);
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -174,23 +171,6 @@ class BarcodeTest extends TestCase
         $this->assertInstanceOf(Ean13::class, $barcode->getAdapter());
         $this->assertFalse($barcode->useChecksum());
     }
-
-
-
-    // public function testDefaultArrayConstructWithMissingAdapter()
-    // {
-    //     $barcode = new Barcode(['options' => 'unknown', 'checksum' => false]);
-    //     $this->validateResult($barcode->validate('0075678164125'), true);
-    // }
-    //
-    // public function testConfigConstructAdapter()
-    // {
-    //     $array = ['adapter' => 'Ean13', 'options' => 'unknown', 'useChecksum' => false];
-    //     $config = new \Zend\Config\Config($array);
-    //
-    //     $barcode = new Barcode($config);
-    //     $this->validateResult($barcode->validate('0075678164125'), true);
-    // }
 
     public function testCODE25()
     {
@@ -450,9 +430,12 @@ class BarcodeTest extends TestCase
         $barcode = new Barcode('ean8');
         $result = $barcode->validate('123');
         $this->validateResult($result, false);
-        // $message = $barcode->getMessages();
-        // $this->assertArrayHasKey('barcodeInvalidLength', $message);
-        // $this->assertContains("length of 7/8 characters", $message['barcodeInvalidLength']);
+        $messages = $result->getMessages();
+        $this->assertCount(1, $messages);
+        $message = $messages[0];
+        $this->assertEquals(Barcode::INVALID_LENGTH, $message->getCode());
+        $this->assertContains($barcode->getMessageTemplates()[Barcode::INVALID_LENGTH], $message->getTemplate());
+        $this->assertEquals(['length' => '7/8'], $message->getVariables());
     }
 
     /**

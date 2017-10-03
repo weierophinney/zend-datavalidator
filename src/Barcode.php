@@ -1,10 +1,7 @@
 <?php
-declare(strict_types=1);
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -118,26 +115,33 @@ class Barcode extends AbstractValidator
         return $this->getAdapter()->useChecksum($checksum);
     }
 
+    /**
+     * Validate the value is a correct barcode.
+     * 
+     * @return ResultInterface
+     */
     public function validate($value, $context = null) : ResultInterface
     {
         if (! is_string($value)) {
             return $this->createInvalidResult($value, [self::INVALID]);
         }
 
-        $adapter      = $this->getAdapter();
-        $this->length = $adapter->getLength();
-        $result       = $adapter->hasValidLength($value);
+        $adapter = $this->getAdapter();
+        $length  = $adapter->getLength();
+        $result  = $adapter->hasValidLength($value);
         if (! $result) {
-            if (is_array($this->length)) {
-                $temp = $this->length;
-                $this->length = "";
-                foreach ($temp as $length) {
-                    $this->length .= "/";
-                    $this->length .= $length;
+            if (is_array($length)) {
+                $temp = $length;
+                $length = "";
+                foreach ($temp as $len) {
+                    $length .= "/";
+                    $length .= $len;
                 }
 
-                $this->length = substr($this->length, 1);
+                $length = substr($length, 1);
             }
+
+            $this->messageVariables['length'] = $length;
 
             return $this->createInvalidResult($value, [self::INVALID_LENGTH]);
         }
