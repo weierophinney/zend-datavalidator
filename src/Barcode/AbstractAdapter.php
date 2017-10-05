@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -11,16 +9,24 @@ namespace Zend\DataValidator\Barcode;
 
 abstract class AbstractAdapter implements AdapterInterface
 {
-    // Allowed barcode characters
+    /**
+     * Allowed barcode characters
+     */
     private $characters;
 
-    // Allowed barcode lengths, integer, array, string
+    /**
+     * Allowed barcode lengths, integer, array, string
+     */
     private $length;
 
-    // Callback to checksum function
+    /**
+     * Callback to checksum function
+     */
     private $checksum;
 
-    // Is a checksum value included?, boolean
+    /**
+     * Is a checksum value included?, boolean
+     */
     private $useChecksum = true;
 
     /**
@@ -29,7 +35,7 @@ abstract class AbstractAdapter implements AdapterInterface
      * @param  string $value The barcode to check for proper length
      * @return bool
      */
-    public function hasValidLength($value)
+    public function hasValidLength($value) : bool
     {
         if (! is_string($value)) {
             return false;
@@ -40,27 +46,31 @@ abstract class AbstractAdapter implements AdapterInterface
         $length = $this->getLength();
         if (is_array($length)) {
             foreach ($length as $value) {
-                if ($fixum == $value) {
-                    $found = true;
-                }
-
-                if ($value == -1) {
-                    $found = true;
+                if ($fixum == $value || $value == -1) {
+                    return true;
                 }
             }
-        } elseif ($fixum == $length) {
-            $found = true;
-        } elseif ($length == -1) {
-            $found = true;
-        } elseif ($length == 'even') {
-            $count = $fixum % 2;
-            $found = (0 == $count);
-        } elseif ($length == 'odd') {
-            $count = $fixum % 2;
-            $found = (1 == $count);
         }
 
-        return $found;
+        if ($fixum == $length) {
+            return true;
+        }
+
+        if ($length == -1) {
+            return true;
+        }
+
+        if ($length == 'even') {
+            $count = $fixum % 2;
+            return (0 == $count);
+        }
+
+        if ($length == 'odd') {
+            $count = $fixum % 2;
+            return (1 == $count);
+        }
+
+        return false;
     }
 
     /**
@@ -69,7 +79,7 @@ abstract class AbstractAdapter implements AdapterInterface
      * @param  string $value The barcode to check for allowed characters
      * @return bool
      */
-    public function hasValidCharacters($value)
+    public function hasValidCharacters($value) : bool
     {
         if (! is_string($value)) {
             return false;
@@ -100,7 +110,7 @@ abstract class AbstractAdapter implements AdapterInterface
      * @param  string $value The barcode to check the checksum for
      * @return bool
      */
-    public function hasValidChecksum($value)
+    public function hasValidChecksum($value) : bool
     {
         $checksum = $this->getChecksum();
         if (! empty($checksum)) {
@@ -115,7 +125,7 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * Returns the allowed barcode length
      *
-     * @return int|array
+     * @return int|array|string
      */
     public function getLength()
     {
@@ -144,35 +154,40 @@ abstract class AbstractAdapter implements AdapterInterface
     /**
      * Sets the checksum validation method
      *
-     * @param callable $checksum Checksum method to call
+     * @param string $checksum Checksum method to call
      * @return AbstractAdapter
      */
-    protected function setChecksum($checksum)
+    protected function setChecksum(string $checksum)
     {
         $this->checksum = $checksum;
         return $this;
     }
 
     /**
-     * Sets the checksum validation, if no value is given, the actual setting is returned
+     * Sets the checksum validation setting
      *
      * @param  bool $check
-     * @return AbstractAdapter|bool
+     * @return null
      */
-    public function useChecksum($check = null)
+    public function setUseChecksum(bool $check) : void
     {
-        if ($check === null) {
-            return $this->useChecksum;
-        }
+        $this->useChecksum = $check;
+    }
 
-        $this->useChecksum = (bool) $check;
-        return $this;
+    /**
+     * Returns the checksum validation settings
+     *
+     * @return bool
+     */
+    public function useChecksum() : bool
+    {
+        return $this->useChecksum;
     }
 
     /**
      * Sets the length of this barcode
      *
-     * @param int|array $length
+     * @param  int|array|string $length
      * @return AbstractAdapter
      */
     protected function setLength($length)

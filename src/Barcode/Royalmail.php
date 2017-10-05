@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -76,16 +74,14 @@ class Royalmail extends AbstractAdapter
      * @param  string $value The barcode to check for allowed characters
      * @return bool
      */
-    public function hasValidCharacters($value)
+    public function hasValidCharacters($value) : bool
     {
-        if ($value[0] == '(') {
-            $value = substr($value, 1);
-
-            if ($value[strlen($value) - 1] == ')') {
-                $value = substr($value, 0, -1);
-            } else {
+        if ($value[0] === '(') {
+            if ($value[strlen($value) - 1] !== ')') {
                 return false;
             }
+
+            $value = substr($value, 1, -1);
         }
 
         return parent::hasValidCharacters($value);

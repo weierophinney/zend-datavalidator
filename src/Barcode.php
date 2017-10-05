@@ -8,6 +8,7 @@
 namespace Zend\DataValidator;
 
 use Traversable;
+use Zend\DataValidator\Barcode\AdapterInterface;
 
 class Barcode extends AbstractValidator
 {
@@ -23,15 +24,17 @@ class Barcode extends AbstractValidator
         self::INVALID        => "Invalid type given. String expected",
     ];
 
-    // Barcode adapter Zend\DataValidator\Barcode\AbstractAdapter
+    /**
+     * Barcode adapter Zend\DataValidator\Barcode\AdapterInterface
+     */
     private $adapter;
 
-    private $useChecksum;
-
-    public function __construct($adapter = null, bool $useChecksum = null)
+    /**
+     * @param $adapter     AdapterInterface  Barcode adapter
+     */
+    public function __construct(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
-        $this->useChecksum = $useChecksum;
 
         $this->messageVariables = [
             'length' => null,
@@ -41,57 +44,11 @@ class Barcode extends AbstractValidator
     /**
      * Returns the set adapter
      *
-     * @return Barcode\AbstractAdapter
+     * @return AdapterInterface
      */
-    public function getAdapter()
+    public function getAdapter() : AdapterInterface
     {
-        if (! ($this->adapter instanceof Barcode\AdapterInterface)) {
-            $adapter = $this->adapter;
-            if (is_null($adapter)) {
-                $adapter = 'Ean13';
-            }
-            $this->setAdapter($adapter);
-        }
-
         return $this->adapter;
-    }
-
-    /**
-     * Sets a new barcode adapter
-     *
-     * @param  string|Barcode\AbstractAdapter $adapter Barcode adapter to use
-     * @return Barcode
-     * @throws Exception\InvalidArgumentException
-     */
-    public function setAdapter($adapter)
-    {
-        if (is_string($adapter)) {
-            $adapter = ucfirst(strtolower($adapter));
-            $adapter = 'Zend\\DataValidator\\Barcode\\' . $adapter;
-
-            if (! class_exists($adapter)) {
-                throw new Exception\InvalidArgumentException('Barcode adapter matching "' . $adapter . '" not found');
-            }
-
-            $adapter = new $adapter();
-
-            if (! is_null($this->useChecksum)) {
-                $adapter->useChecksum($this->useChecksum);
-            }
-        }
-
-        if (! $adapter instanceof Barcode\AdapterInterface) {
-            throw new Exception\InvalidArgumentException(
-                sprintf(
-                    "Adapter %s does not implement Zend\\DataValidator\\Barcode\\AdapterInterface",
-                    (is_object($adapter) ? get_class($adapter) : gettype($adapter))
-                )
-            );
-        }
-
-        $this->adapter = $adapter;
-
-        return $this;
     }
 
     /**
@@ -105,19 +62,29 @@ class Barcode extends AbstractValidator
     }
 
     /**
-     * Sets if checksum should be validated, if no value is given the actual setting is returned
+     * Sets the checksum validation
      *
-     * @param  bool $checksum
+     * @param  bool $check
+     * @return void
+     */
+    public function setUseChecksum(bool $check) : void
+    {
+        $this->getAdapter()->setUseChecksum($check);
+    }
+
+    /**
+     * Returns the actual setting of checksum
+     *
      * @return bool
      */
-    public function useChecksum($checksum = null)
+    public function useChecksum() : bool
     {
-        return $this->getAdapter()->useChecksum($checksum);
+        return $this->getAdapter()->useChecksum();
     }
 
     /**
      * Validate the value is a correct barcode.
-     * 
+     *
      * @return ResultInterface
      */
     public function validate($value, $context = null) : ResultInterface
@@ -151,7 +118,7 @@ class Barcode extends AbstractValidator
             return $this->createInvalidResult($value, [self::INVALID_CHARS]);
         }
 
-        if ($this->useChecksum(null)) {
+        if ($this->useChecksum()) {
             $result = $adapter->hasValidChecksum($value);
             if (! $result) {
                 return $this->createInvalidResult($value, [self::FAILED]);

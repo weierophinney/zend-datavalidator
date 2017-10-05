@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -17,7 +15,7 @@ interface AdapterInterface
      * @param  string $value  The barcode to check for proper length
      * @return bool
      */
-    public function hasValidLength($value);
+    public function hasValidLength($value) : bool;
 
     /**
      * Checks for allowed characters within the barcode
@@ -25,7 +23,7 @@ interface AdapterInterface
      * @param  string $value The barcode to check for allowed characters
      * @return bool
      */
-    public function hasValidCharacters($value);
+    public function hasValidCharacters($value) : bool;
 
     /**
      * Validates the checksum
@@ -33,12 +31,12 @@ interface AdapterInterface
      * @param string $value The barcode to check the checksum for
      * @return bool
      */
-    public function hasValidChecksum($value);
+    public function hasValidChecksum($value) : bool;
 
     /**
      * Returns the allowed barcode length
      *
-     * @return int|array
+     * @return int|array|string
      */
     public function getLength();
 
@@ -52,15 +50,22 @@ interface AdapterInterface
     /**
      * Returns if barcode uses a checksum
      *
-     * @return bool
+     * @return null|string
      */
     public function getChecksum();
 
     /**
-     * Sets the checksum validation, if no value is given, the actual setting is returned
+     * Sets the checksum validation setting
      *
      * @param  bool $check
-     * @return AbstractAdapter|bool
+     * @return null
      */
-    public function useChecksum($check = null);
+    public function setUseChecksum(bool $check) : void;
+
+    /**
+     * Returns the checksum validation settings
+     *
+     * @return bool
+     */
+    public function useChecksum() : bool;
 }

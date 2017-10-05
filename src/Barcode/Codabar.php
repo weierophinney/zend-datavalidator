@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -18,14 +16,14 @@ class Codabar extends AbstractAdapter
     {
         $this->setLength(-1);
         $this->setCharacters('0123456789-$:/.+ABCDTN*E');
-        $this->useChecksum(false);
+        $this->setUseChecksum(false);
     }
 
     /**
      * Checks for allowed characters
      * @see Zend\DataValidator\Barcode.AbstractAdapter::checkChars()
      */
-    public function hasValidCharacters($value)
+    public function hasValidCharacters($value) : bool
     {
         if (strpbrk($value, 'ABCD')) {
             $first = $value[0];

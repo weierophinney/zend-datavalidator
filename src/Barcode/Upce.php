@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -27,13 +25,9 @@ class Upce extends AbstractAdapter
      * @param string $value Value
      * @return bool
      */
-    public function hasValidLength($value)
+    public function hasValidLength($value) : bool
     {
-        if (strlen($value) != 8) {
-            $this->useChecksum(false);
-        } else {
-            $this->useChecksum(true);
-        }
+        $this->setUseChecksum(strlen($value) === 8);
 
         return parent::hasValidLength($value);
     }

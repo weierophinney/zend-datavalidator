@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -27,7 +25,7 @@ class Issn extends AbstractAdapter
      * @param  string $value The barcode to check for allowed characters
      * @return bool
      */
-    public function hasValidCharacters($value)
+    public function hasValidCharacters($value) : bool
     {
         if (strlen($value) != 8) {
             if (strpos($value, 'X') !== false) {
@@ -44,7 +42,7 @@ class Issn extends AbstractAdapter
      * @param  string $value The barcode to check the checksum for
      * @return bool
      */
-    public function hasValidChecksum($value)
+    public function hasValidChecksum($value) : bool
     {
         if (strlen($value) == 8) {
             $this->setChecksum('issn');
@@ -79,9 +77,9 @@ class Issn extends AbstractAdapter
 
         $check %= 11;
         $check  = ($check === 0 ? 0 : (11 - $check));
-        if ($check == $checksum) {
-            return true;
-        } elseif (($check == 10) && ($checksum == 'X')) {
+        if ($check == $checksum
+            || ($check == 10 && $checksum == 'X')
+        ) {
             return true;
         }
 
