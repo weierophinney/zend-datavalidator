@@ -7,7 +7,7 @@
 
 namespace Zend\DataValidator;
 
-class ValidatorChain implements ValidatorInterface
+final class ValidatorChain implements ValidatorInterface
 {
     /**
      * Array of validators.
@@ -35,7 +35,7 @@ class ValidatorChain implements ValidatorInterface
     {
         $this->validators[] = [
             'instance'            => $validator,
-            'breakChainOnFailure' => (bool) $breakChainOnFailure,
+            'breakChainOnFailure' => $breakChainOnFailure,
         ];
     }
 

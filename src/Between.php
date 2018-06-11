@@ -7,7 +7,7 @@
 
 namespace Zend\DataValidator;
 
-class Between extends AbstractValidator
+final class Between extends AbstractValidator
 {
     const NOT_BETWEEN        = self::class . '::notBetween';
     const NOT_BETWEEN_STRICT = self::class . '::notBetweenStrict';
@@ -115,7 +115,7 @@ class Between extends AbstractValidator
         if ($value < $this->getMin() || $value > $this->getMax()) {
             return $this->createInvalidResult($value, [self::NOT_BETWEEN]);
         }
-        return new Result(true, $value);
+        return Result::createValid($value);
     }
 
     private function validateExclusive($value, $context) : Result
@@ -123,6 +123,6 @@ class Between extends AbstractValidator
         if ($value <= $this->getMin() || $value >= $this->getMax()) {
             return $this->createInvalidResult($value, [self::NOT_BETWEEN_STRICT]);
         }
-        return new Result(true, $value);
+        return Result::createValid($value);
     }
 }
