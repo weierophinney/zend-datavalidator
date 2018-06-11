@@ -18,6 +18,16 @@ final class Result implements ResultInterface
     /** @var mixed */
     private $value;
 
+    public static function createValidResult($value) : self
+    {
+        return new self(true, $value);
+    }
+
+    public static function createInvalidResult($value, array $messages = []) : self
+    {
+        return new self(false, $value, $messages);
+    }
+
     public function __construct(bool $isValid, $value, array $messages = [])
     {
         $this->isValid = $isValid;

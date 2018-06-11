@@ -15,7 +15,7 @@ namespace Zend\DataValidator;
  * value does not pass validation, the `self::INVALID` message template will be
  * used to create a validation failure message for the returned result.
  */
-class Callback extends AbstractValidator
+final class Callback extends AbstractValidator
 {
     const INVALID = self::class . '::invalid';
 
@@ -51,7 +51,7 @@ class Callback extends AbstractValidator
         }
 
         return $result
-            ? new Result(true, $value)
+            ? Result::createValidResult($value)
             : $this->createInvalidResult($value, [self::INVALID]);
     }
 }

@@ -12,11 +12,11 @@ use Zend\DataValidator\ResultInterface;
 
 class MissingResultsException extends RuntimeException implements ExceptionInterface
 {
-    public static function forClass(string $class)
+    public static function forClass(string $className) : self
     {
         return new self(sprintf(
             '%s is missing instaces of %s, and is thus in an ambiguous state',
-            $class,
+            $className,
             ResultInterface::class
         ));
     }

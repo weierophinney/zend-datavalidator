@@ -25,7 +25,7 @@ use Zend\Validator\ValidatorInterface as LegacyValidatorInterface;
  * creates them from the results of `getMessages()`, passing no message
  * variables to the list.
  */
-class LegacyValidatorDecorator implements ValidatorInterface
+final class LegacyValidatorDecorator implements ValidatorInterface
 {
     /** @var LegacyValidatorInterface */
     private $legacyValidator;
@@ -38,7 +38,7 @@ class LegacyValidatorDecorator implements ValidatorInterface
     public function validate($value, $context = null) : ResultInterface
     {
         if ($this->legacyValidator->isValid($value, $context)) {
-            return new Result(true, $value);
+            return Result::createValidResult($value);
         }
 
         if ($this->legacyValidator instanceof AbstractLegacyValidator) {
@@ -64,7 +64,7 @@ class LegacyValidatorDecorator implements ValidatorInterface
             $template = $options['messageTemplates'][$messageKey];
             $messages[] = new ValidationFailureMessage($messageKey, $template, $messageVariables);
         }
-        return new Result(false, $value, $messages);
+        return Result::createInvalidResult($value, $messages);
     }
 
     private function marshalResultFromLegacyValidator($value) : ResultInterface
@@ -73,6 +73,6 @@ class LegacyValidatorDecorator implements ValidatorInterface
         foreach ($this->legacyValidator->getMessages() as $code => $message) {
             $messages[] = new ValidationFailureMessage($code, $message);
         }
-        return new Result(false, $value, $messages);
+        return Result::createInvalidResult($value, $messages);
     }
 }
