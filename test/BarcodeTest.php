@@ -12,10 +12,10 @@ use Zend\DataValidator\Barcode;
 use Zend\DataValidator\Barcode\AdapterInterface;
 use Zend\DataValidator\Exception\InvalidArgumentException;
 use Zend\DataValidator\Result;
-use ZendTest\DataValidator\Barcode\MyBarcode1;
-use ZendTest\DataValidator\Barcode\MyBarcode2;
-use ZendTest\DataValidator\Barcode\MyBarcode3;
-use ZendTest\DataValidator\Barcode\MyBarcode4;
+use ZendTest\DataValidator\TestAsset\MyBarcode1;
+use ZendTest\DataValidator\TestAsset\MyBarcode2;
+use ZendTest\DataValidator\TestAsset\MyBarcode3;
+use ZendTest\DataValidator\TestAsset\MyBarcode4;
 
 /**
  * Barcode Test

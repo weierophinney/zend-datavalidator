@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -17,6 +17,11 @@ class Barcode extends AbstractValidator
     const INVALID_CHARS  = self::class . '::barcodeInvalidChars';
     const INVALID_LENGTH = self::class . '::barcodeInvalidLength';
 
+    /**
+     * Validation failure message template definitions
+     *
+     * @var array
+     */
     protected $messageTemplates = [
         self::FAILED         => "The input failed checksum validation",
         self::INVALID_CHARS  => "The input contains invalid characters",
@@ -25,13 +30,10 @@ class Barcode extends AbstractValidator
     ];
 
     /**
-     * Barcode adapter Zend\DataValidator\Barcode\AdapterInterface
+     * @var AdapterInterface
      */
     private $adapter;
 
-    /**
-     * @param $adapter     AdapterInterface  Barcode adapter
-     */
     public function __construct(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
@@ -52,16 +54,6 @@ class Barcode extends AbstractValidator
     }
 
     /**
-     * Returns the checksum option
-     *
-     * @return string
-     */
-    public function getChecksum()
-    {
-        return $this->getAdapter()->getChecksum();
-    }
-
-    /**
      * Sets the checksum validation
      *
      * @param  bool $check
@@ -70,6 +62,16 @@ class Barcode extends AbstractValidator
     public function setUseChecksum(bool $check) : void
     {
         $this->getAdapter()->setUseChecksum($check);
+    }
+
+    /**
+     * Returns the checksum option
+     *
+     * @return string
+     */
+    public function getChecksum()
+    {
+        return $this->getAdapter()->getChecksum();
     }
 
     /**
@@ -125,6 +127,6 @@ class Barcode extends AbstractValidator
             }
         }
 
-        return new Result(true, $value);
+        return Result::createValidResult($value);
     }
 }
