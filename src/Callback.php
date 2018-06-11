@@ -51,7 +51,7 @@ final class Callback extends AbstractValidator
         }
 
         return $result
-            ? Result::createValid($value)
+            ? Result::createValidResult($value)
             : $this->createInvalidResult($value, [self::INVALID]);
     }
 }

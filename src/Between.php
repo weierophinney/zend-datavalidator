@@ -115,7 +115,7 @@ final class Between extends AbstractValidator
         if ($value < $this->getMin() || $value > $this->getMax()) {
             return $this->createInvalidResult($value, [self::NOT_BETWEEN]);
         }
-        return Result::createValid($value);
+        return Result::createValidResult($value);
     }
 
     private function validateExclusive($value, $context) : Result
@@ -123,6 +123,6 @@ final class Between extends AbstractValidator
         if ($value <= $this->getMin() || $value >= $this->getMax()) {
             return $this->createInvalidResult($value, [self::NOT_BETWEEN_STRICT]);
         }
-        return Result::createValid($value);
+        return Result::createValidResult($value);
     }
 }

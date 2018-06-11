@@ -45,7 +45,7 @@ abstract class AbstractValidator implements ValidatorInterface
             );
         }, $messageKeys);
 
-        return Result::createInvalid($value, $messages);
+        return Result::createInvalidResult($value, $messages);
     }
 
     /**

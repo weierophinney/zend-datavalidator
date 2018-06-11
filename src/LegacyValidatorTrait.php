@@ -19,7 +19,7 @@ trait LegacyValidatorTrait
     public function validate($value, $context = null) : ResultInterface
     {
         if ($this->isValid($value, $context)) {
-            return Result::createValid($value);
+            return Result::createValidResult($value);
         }
 
         $messageVariables = array_merge(
@@ -32,6 +32,6 @@ trait LegacyValidatorTrait
             $template = $this->abstractOptions['messageTemplates'][$messageKey];
             $messages[] = new ValidationFailureMessage($messageKey, $template, $messageVariables);
         }
-        return Result::createInvalid($value, $messages);
+        return Result::createInvalidResult($value, $messages);
     }
 }

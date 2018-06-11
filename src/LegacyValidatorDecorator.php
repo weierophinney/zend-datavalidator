@@ -38,7 +38,7 @@ final class LegacyValidatorDecorator implements ValidatorInterface
     public function validate($value, $context = null) : ResultInterface
     {
         if ($this->legacyValidator->isValid($value, $context)) {
-            return Result::createValid($value);
+            return Result::createValidResult($value);
         }
 
         if ($this->legacyValidator instanceof AbstractLegacyValidator) {
@@ -64,7 +64,7 @@ final class LegacyValidatorDecorator implements ValidatorInterface
             $template = $options['messageTemplates'][$messageKey];
             $messages[] = new ValidationFailureMessage($messageKey, $template, $messageVariables);
         }
-        return Result::createInvalid($value, $messages);
+        return Result::createInvalidResult($value, $messages);
     }
 
     private function marshalResultFromLegacyValidator($value) : ResultInterface
@@ -73,6 +73,6 @@ final class LegacyValidatorDecorator implements ValidatorInterface
         foreach ($this->legacyValidator->getMessages() as $code => $message) {
             $messages[] = new ValidationFailureMessage($code, $message);
         }
-        return Result::createInvalid($value, $messages);
+        return Result::createInvalidResult($value, $messages);
     }
 }
