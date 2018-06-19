@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace ZendTest\DataValidator;
 
@@ -19,7 +21,7 @@ class DateTest extends TestCase
     public function datesDataProvider()
     {
         return [
-            //    date                       format             isValid
+            // date                     format             isValid
             ['2007-01-01',              null,              true],
             ['2007-02-28',              null,              true],
             ['2007-02-29',              null,              false],
@@ -49,22 +51,29 @@ class DateTest extends TestCase
             ['2007-01-01T12:02:55Z',    DateTime::ISO8601, true],
             ['12:02:55',                'H:i:s',           true],
             ['25:02:55',                'H:i:s',           false],
+
             // int
             [0,                         null,              true],
             [1340677235,                null,              true],
+
             // 32bit version of php will convert this to double
             [999999999999,              null,              true],
+
             // double
             [12.12,                     null,              false],
+
             // array
             [['2012', '06', '25'],      null,              true],
+
             // 0012-06-25 is a valid date, if you want 2012, use 'y' instead of 'Y'
             [['12', '06', '25'],        null,              true],
             [['2012', '06', '33'],      null,              false],
             [[1 => 1],                  null,              false],
+
             // DateTime
             [new DateTime(),            null,              true],
             [new DateTimeImmutable(),   null ,              true],
+
             // invalid obj
             [new stdClass(),            null,              false],
         ];

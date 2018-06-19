@@ -1,15 +1,19 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\DataValidator;
 
 use DateTime;
-use DateTimeImmutable;
+use DateTimeInterface;
 use Traversable;
+
+use function date_create;
 
 /**
  * Validates that a given value is a DateTime instance or can be converted into one.
@@ -20,16 +24,16 @@ class Date extends AbstractValidator
      * Validity constants
      * @var string
      */
-    const INVALID        = self::class . 'dateInvalid';
-    const INVALID_DATE   = self::class . 'dateInvalidDate';
-    const FALSEFORMAT    = self::class . 'dateFalseFormat';
+    public const INVALID        = self::class . 'invalidValue';
+    public const INVALID_DATE   = self::class . 'invalidDate';
+    public const FALSEFORMAT    = self::class . 'falseFormat';
     /**#@-*/
 
     /**
      * Default format constant
      * @var string
      */
-    const FORMAT_DEFAULT = 'Y-m-d';
+    public const FORMAT_DEFAULT = 'Y-m-d';
 
     /**
      * Validation failure message template definitions
@@ -45,24 +49,15 @@ class Date extends AbstractValidator
     /**
      * @var string
      */
-    protected $format = self::FORMAT_DEFAULT;
+    private $format = self::FORMAT_DEFAULT;
 
-    /**
-     * Sets validator options
-     *
-     * @param string $format
-     */
     public function __construct(string $format = null)
     {
-        if (is_null($format)) {
-            $format = self::FORMAT_DEFAULT;
-        }
+        $this->format = $format ?: self::FORMAT_DEFAULT;
 
         $this->messageVariables = [
-            'format' => $format,
+            'format' => $this->format,
         ];
-
-        $this->format = $format;
     }
 
     /**
@@ -76,54 +71,52 @@ class Date extends AbstractValidator
     }
 
     /**
-     * Returns true if $value is a DateTime instance or can be converted into one.
+     * Returns a successful validation result if $value is a DateTimeImmutable
+     * instance or can be converted into one using the format provided during
+     * instantiation.
      *
-     * @param  string|array|int|DateTime $value
-     * @return ResultInterface
+     * @param string|array|int|float|DateTimeImmutable $value
      */
     public function validate($value, $context = null) : ResultInterface
     {
-        $result = $this->convertToDateTime($value);
+        if ($value instanceof DateTimeInterface) {
+            return Result::createValidResult($value);
+        }
+
+        switch (gettype($value)) {
+            case 'string':
+                $result = $this->convertString($value);
+                break;
+            case 'integer':
+                $result = $this->convertInteger($value);
+                break;
+            case 'double':
+                $result = $this->convertDouble($value);
+                break;
+            case 'array':
+                $result = $this->convertArray($value);
+                break;
+            default:
+                return $this->createInvalidResult($value, [self::INVALID]);
+        }
 
         if ($result instanceof ResultInterface) {
             return $result;
         }
 
-        if (! $result) {
+        if (false === $result) {
             return $this->createInvalidResult($value, [self::INVALID_DATE]);
         }
 
-        return new Result(true, $value);
-    }
-
-    /**
-     * Attempts to convert an int, string, or array to a DateTime object
-     *
-     * @param  string|int|array $param
-     * @return bool|DateTime|ResultInterface
-     */
-    protected function convertToDateTime($param)
-    {
-        if ($param instanceof DateTime || $param instanceof DateTimeImmutable) {
-            return $param;
-        }
-
-        $type = gettype($param);
-        if (! in_array($type, ['string', 'integer', 'double', 'array'])) {
-            return $this->createInvalidResult($param, [self::INVALID]);
-        }
-
-        $convertMethod = 'convert' . ucfirst($type);
-        return $this->{$convertMethod}($param);
+        return Result::createValidResult($value);
     }
 
     /**
      * Attempts to convert an integer into a DateTime object
      *
-     * @param  integer $value
-     * @return bool|DateTime
+     * @return false|DateTime
      */
-    protected function convertInteger($value)
+    private function convertInteger(int $value)
     {
         return date_create("@$value");
     }
@@ -131,10 +124,9 @@ class Date extends AbstractValidator
     /**
      * Attempts to convert an double into a DateTime object
      *
-     * @param  double $value
-     * @return bool|DateTime
+     * @return false|DateTime
      */
-    protected function convertDouble($value)
+    private function convertDouble(float $value)
     {
         return DateTime::createFromFormat('U', $value);
     }
@@ -143,9 +135,9 @@ class Date extends AbstractValidator
      * Attempts to convert a string into a DateTime object
      *
      * @param  string $value
-     * @return ResultInterface|DateTime
+     * @return false|ResultInterface|DateTime
      */
-    protected function convertString($value)
+    private function convertString(string $value)
     {
         $date = DateTime::createFromFormat($this->format, $value);
 
@@ -162,11 +154,10 @@ class Date extends AbstractValidator
     /**
      * Implodes the array into a string and proxies to {@link convertString()}.
      *
-     * @param  array $value
-     * @return ResultInterface|DateTime
+     * @return false|ResultInterface|DateTime
      * @todo   enhance the implosion
      */
-    protected function convertArray(array $value)
+    private function convertArray(array $value)
     {
         return $this->convertString(implode('-', $value));
     }
