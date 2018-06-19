@@ -33,8 +33,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ZendTest\\DataValidator\\": "test/",
-            "ZendTest\\DataValidator\\Barcode\\": "test/_files/"
+            "ZendTest\\DataValidator\\": "test/"
         }
     },
     "extra": {
