@@ -45,6 +45,6 @@ final class Uuid extends AbstractValidator
             return $this->createInvalidResult($value, [self::INVALID]);
         }
 
-        return new Result(true, $value);
+        return Result::createValidResult($value);
     }
 }
