@@ -5,19 +5,15 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
 class Intelligentmail extends AbstractAdapter
 {
-    /**
-     * Constructor
-     *
-     * Sets check flag to false.
-     */
     public function __construct()
     {
         $this->setLength([20, 25, 29, 31]);
         $this->setCharacters('0123456789');
-        $this->setUseChecksum(false);
     }
 }

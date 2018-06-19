@@ -5,30 +5,31 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
-class Upce extends AbstractAdapter
+class Upce extends AbstractAdapter implements ChecksummableInterface
 {
+    use ChecksumTrait;
+    use GtinChecksumTrait;
+
     /**
      * Constructor for this barcode adapter
      */
     public function __construct()
     {
+        $this->checksumCallback = [$this, 'validateGtinChecksum'];
         $this->setLength([6, 7, 8]);
         $this->setCharacters('0123456789');
-        $this->setChecksum('gtin');
     }
 
     /**
-     * Overrides parent checkLength
-     *
-     * @param string $value Value
-     * @return bool
+     * Implements ChecksummableInterface::useChecksum, and overrides
+     * ChecksumTrait::useChecksum
      */
-    public function hasValidLength($value) : bool
+    public function useChecksum(string $value = null) : bool
     {
-        $this->setUseChecksum(strlen($value) === 8);
-
-        return parent::hasValidLength($value);
+        return strlen($value) === 8;
     }
 }

@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace ZendTest\DataValidator\TestAsset;
 
 use Zend\DataValidator\Barcode\AbstractAdapter;
@@ -15,6 +17,5 @@ class MyBarcode5
     {
         $setLength = 'odd';
         $setCharacters = 128;
-        $setChecksum = '_mod10';
     }
 }

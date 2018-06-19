@@ -5,8 +5,13 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
+/**
+ * @todo Should this allow checksum validation?
+ */
 class Code93ext extends AbstractAdapter
 {
     /**
@@ -16,6 +21,5 @@ class Code93ext extends AbstractAdapter
     {
         $this->setLength(-1);
         $this->setCharacters(128);
-        $this->setUseChecksum(false);
     }
 }

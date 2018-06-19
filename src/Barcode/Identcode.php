@@ -5,35 +5,23 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
-class Identcode extends AbstractAdapter
+class Identcode extends AbstractAdapter implements ChecksummableInterface
 {
-    /**
-     * Allowed barcode lengths
-     * @var int
-     */
-    protected $length = 12;
-
-    /**
-     * Allowed barcode characters
-     * @var string
-     */
-    protected $characters = '0123456789';
-
-    /**
-     * Checksum function
-     * @var string
-     */
-    protected $checksum = 'identcode';
+    use ChecksumTrait;
+    use IdentcodeChecksumTrait;
 
     /**
      * Constructor for this barcode adapter
      */
-    public function __construct()
+    public function __construct(bool $useChecksum = true)
     {
+        $this->useChecksum = $useChecksum;
+        $this->checksumCallback = [$this, 'validateIdentcodeChecksum'];
         $this->setLength(12);
         $this->setCharacters('0123456789');
-        $this->setChecksum('identcode');
     }
 }

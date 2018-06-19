@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator;
 
 use Traversable;
@@ -54,37 +56,6 @@ class Barcode extends AbstractValidator
     }
 
     /**
-     * Sets the checksum validation
-     *
-     * @param  bool $check
-     * @return void
-     */
-    public function setUseChecksum(bool $check) : void
-    {
-        $this->getAdapter()->setUseChecksum($check);
-    }
-
-    /**
-     * Returns the checksum option
-     *
-     * @return string
-     */
-    public function getChecksum()
-    {
-        return $this->getAdapter()->getChecksum();
-    }
-
-    /**
-     * Returns the actual setting of checksum
-     *
-     * @return bool
-     */
-    public function useChecksum() : bool
-    {
-        return $this->getAdapter()->useChecksum();
-    }
-
-    /**
      * Validate the value is a correct barcode.
      *
      * @return ResultInterface
@@ -101,10 +72,9 @@ class Barcode extends AbstractValidator
         if (! $result) {
             if (is_array($length)) {
                 $temp = $length;
-                $length = "";
+                $length = '';
                 foreach ($temp as $len) {
-                    $length .= "/";
-                    $length .= $len;
+                    $length .= '/' . $len;
                 }
 
                 $length = substr($length, 1);
@@ -120,7 +90,7 @@ class Barcode extends AbstractValidator
             return $this->createInvalidResult($value, [self::INVALID_CHARS]);
         }
 
-        if ($this->useChecksum()) {
+        if ($adapter instanceof Barcode\ChecksummableInterface && $adapter->useChecksum($value)) {
             $result = $adapter->hasValidChecksum($value);
             if (! $result) {
                 return $this->createInvalidResult($value, [self::FAILED]);

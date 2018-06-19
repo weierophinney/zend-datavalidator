@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace ZendTest\DataValidator;
 
 use PHPUnit\Framework\TestCase;
@@ -22,7 +24,6 @@ use ZendTest\DataValidator\TestAsset\MyBarcode4;
  */
 class BarcodeTest extends TestCase
 {
-
     private function validateResult(Result $result, $expectedResult)
     {
         $this->assertSame(
@@ -67,24 +68,10 @@ class BarcodeTest extends TestCase
         $this->validateResult($validator->validate($input), $expectedResult);
     }
 
-    public function testInvalidChecksumAdapter()
-    {
-        $barcode = new Barcode(new MyBarcode1());
-        $result = $barcode->validate('0000000');
-        $this->assertSame(
-            false,
-            $result->isValid(),
-            'Failed value: 0000000'
-        );
-
-        // $this->assertArrayHasKey('Zend\DataValidator\Barcode::barcodeFailed', $result->getMessages());
-        $this->assertFalse($barcode->getAdapter()->hasValidChecksum('0000000'));
-    }
-
     public function testInvalidCharAdapter()
     {
         $barcode = new Barcode(new MyBarcode1());
-        $this->assertFalse($barcode->getAdapter()->hasValidCharacters(123));
+        $this->assertFalse($barcode->getAdapter()->hasValidCharacters('123'));
     }
 
     public function testAscii128CharacterAdapter()
@@ -96,7 +83,7 @@ class BarcodeTest extends TestCase
     public function testInvalidLengthAdapter()
     {
         $barcode = new Barcode(new MyBarcode2());
-        $this->assertFalse($barcode->getAdapter()->hasValidLength(123));
+        $this->assertFalse($barcode->getAdapter()->hasValidLength('1234'));
     }
 
     public function testArrayLengthAdapter()
@@ -133,7 +120,8 @@ class BarcodeTest extends TestCase
         $this->validateResult($barcode->validate('123'), true);
         $this->validateResult($barcode->validate('123a'), false);
 
-        $barcode->setUseChecksum(true);
+        // using checksum:
+        $barcode = new Barcode(new Barcode\Code25(true));
         $this->validateResult($barcode->validate('0123456789101214'), true);
         $this->validateResult($barcode->validate('0123456789101213'), false);
     }
@@ -144,7 +132,8 @@ class BarcodeTest extends TestCase
         $this->validateResult($barcode->validate('0123456789101213'), true);
         $this->validateResult($barcode->validate('123'), false);
 
-        $barcode->setUseChecksum(true);
+        // using checksum:
+        $barcode = new Barcode(new Barcode\Code25interleaved(true));
         $this->validateResult($barcode->validate('0123456789101214'), true);
         $this->validateResult($barcode->validate('0123456789101213'), false);
     }
@@ -156,7 +145,8 @@ class BarcodeTest extends TestCase
         $this->validateResult($barcode->validate('00075678164124'), true);
         $this->validateResult($barcode->validate('Test93Test93Test'), false);
 
-        $barcode->setUseChecksum(true);
+        // using checksum:
+        $barcode = new Barcode(new Barcode\Code39(true));
         $this->validateResult($barcode->validate('159AZH'), true);
         $this->validateResult($barcode->validate('159AZG'), false);
     }
@@ -167,11 +157,6 @@ class BarcodeTest extends TestCase
         $this->validateResult($barcode->validate('TEST93TEST93TEST93TEST93Y+'), true);
         $this->validateResult($barcode->validate('00075678164124'), true);
         $this->validateResult($barcode->validate('Test93Test93Test'), true);
-
-        // @TODO: CODE39 EXTENDED CHECKSUM VALIDATION MISSING
-        // $barcode->setUseChecksum(true);
-        // $this->validateResult($barcode->validate('159AZH'), true);
-        // $this->validateResult($barcode->validate('159AZG'), false);
     }
 
     public function testCODE93()
@@ -180,7 +165,8 @@ class BarcodeTest extends TestCase
         $this->validateResult($barcode->validate('TEST93+'), true);
         $this->validateResult($barcode->validate('Test93+'), false);
 
-        $barcode->setUseChecksum(true);
+        // using checksum:
+        $barcode = new Barcode(new Barcode\Code93(true));
         $this->validateResult($barcode->validate('CODE 93E0'), true);
         $this->validateResult($barcode->validate('CODE 93E1'), false);
     }
@@ -190,11 +176,6 @@ class BarcodeTest extends TestCase
         $barcode = new Barcode(new Barcode\Code93ext());
         $this->validateResult($barcode->validate('TEST93+'), true);
         $this->validateResult($barcode->validate('Test93+'), true);
-
-        // @TODO: CODE93 EXTENDED CHECKSUM VALIDATION MISSING
-        // $barcode->setUseChecksum(true);
-        // $this->assertTrue($barcode->validate('CODE 93E0'));
-        // $this->assertFalse($barcode->validate('CODE 93E1'));
     }
 
     public function testEAN2()
@@ -425,11 +406,13 @@ class BarcodeTest extends TestCase
             $this->markTestSkipped('Missing ext/iconv');
         }
 
+        // Using checksum:
         $barcode = new Barcode(new Barcode\Code128());
         $this->validateResult($barcode->validate('ˆCODE128:Š'), true);
         $this->validateResult($barcode->validate('‡01231[Š'), true);
 
-        $barcode->setUseChecksum(false);
+        // No checksum:
+        $barcode = new Barcode(new Barcode\Code128(false));
         $this->validateResult($barcode->validate('012345'), true);
         $this->validateResult($barcode->validate('ABCDEF'), true);
         $this->validateResult($barcode->validate('01234Ê'), false);

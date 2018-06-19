@@ -5,19 +5,15 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
 class Ean5 extends AbstractAdapter
 {
-    /**
-     * Constructor
-     *
-     * Sets check flag to false.
-     */
     public function __construct()
     {
         $this->setLength(5);
         $this->setCharacters('0123456789');
-        $this->setUseChecksum(false);
     }
 }

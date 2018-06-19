@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
 interface AdapterInterface
@@ -15,7 +17,7 @@ interface AdapterInterface
      * @param  string $value  The barcode to check for proper length
      * @return bool
      */
-    public function hasValidLength($value) : bool;
+    public function hasValidLength(string $value) : bool;
 
     /**
      * Checks for allowed characters within the barcode
@@ -23,15 +25,7 @@ interface AdapterInterface
      * @param  string $value The barcode to check for allowed characters
      * @return bool
      */
-    public function hasValidCharacters($value) : bool;
-
-    /**
-     * Validates the checksum
-     *
-     * @param string $value The barcode to check the checksum for
-     * @return bool
-     */
-    public function hasValidChecksum($value) : bool;
+    public function hasValidCharacters(string $value) : bool;
 
     /**
      * Returns the allowed barcode length
@@ -46,26 +40,4 @@ interface AdapterInterface
      * @return int|string|array
      */
     public function getCharacters();
-
-    /**
-     * Returns if barcode uses a checksum
-     *
-     * @return null|string
-     */
-    public function getChecksum();
-
-    /**
-     * Sets the checksum validation setting
-     *
-     * @param  bool $check
-     * @return null
-     */
-    public function setUseChecksum(bool $check) : void;
-
-    /**
-     * Returns the checksum validation settings
-     *
-     * @return bool
-     */
-    public function useChecksum() : bool;
 }

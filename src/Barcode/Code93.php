@@ -5,17 +5,21 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
-class Code93 extends AbstractAdapter
+class Code93 extends AbstractAdapter implements ChecksummableInterface
 {
+    use ChecksumTrait;
+
     /**
      * Note that the characters !"§& are only synonyms
      * @var array
      */
-    protected $check = [
-        '0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
-        '7' => 7, '8' => 8, '9' => 9, 'A' => 10, 'B' => 11, 'C' => 12, 'D' => 13,
+    private $check = [
+        '0' => 0,  '1' => 1,  '2' => 2,  '3' => 3,  '4' => 4,  '5' => 5,  '6' => 6,
+        '7' => 7,  '8' => 8,  '9' => 9,  'A' => 10, 'B' => 11, 'C' => 12, 'D' => 13,
         'E' => 14, 'F' => 15, 'G' => 16, 'H' => 17, 'I' => 18, 'J' => 19, 'K' => 20,
         'L' => 21, 'M' => 22, 'N' => 23, 'O' => 24, 'P' => 25, 'Q' => 26, 'R' => 27,
         'S' => 28, 'T' => 29, 'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33, 'Y' => 34,
@@ -26,21 +30,18 @@ class Code93 extends AbstractAdapter
     /**
      * Constructor for this barcode adapter
      */
-    public function __construct()
+    public function __construct(bool $useChecksum = false)
     {
+        $this->useChecksum = $useChecksum;
+        $this->checksumCallback = [$this, 'validateCode93Checksum'];
         $this->setLength(-1);
         $this->setCharacters('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ -.$/+%');
-        $this->setChecksum('code93');
-        $this->setUseChecksum(false);
     }
 
     /**
      * Validates the checksum (Modulo CK)
-     *
-     * @param  string $value The barcode to validate
-     * @return bool
      */
-    protected function code93($value)
+    private function validateCode93Checksum(string $value) : bool
     {
         $checksum = substr($value, -2, 2);
         $value    = str_split(substr($value, 0, -2));
@@ -69,10 +70,6 @@ class Code93 extends AbstractAdapter
         }
         $check .= array_search(($count % 47), $this->check);
 
-        if ($check == $checksum) {
-            return true;
-        }
-
-        return false;
+        return $check === $checksum;
     }
 }

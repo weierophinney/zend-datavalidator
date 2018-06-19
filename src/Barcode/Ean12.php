@@ -5,17 +5,23 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
-class Ean12 extends AbstractAdapter
+class Ean12 extends AbstractAdapter implements ChecksummableInterface
 {
+    use ChecksumTrait;
+    use GtinChecksumTrait;
+
     /**
      * Constructor for this barcode adapter
      */
-    public function __construct()
+    public function __construct(bool $useChecksum = true)
     {
+        $this->useChecksum = $useChecksum;
+        $this->checksumCallback = [$this, 'validateGtinChecksum'];
         $this->setLength(12);
         $this->setCharacters('0123456789');
-        $this->setChecksum('gtin');
     }
 }

@@ -5,20 +5,25 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
-class Code25interleaved extends AbstractAdapter
+class Code25interleaved extends AbstractAdapter implements ChecksummableInterface
 {
+    use ChecksumTrait;
+    use Code25ChecksumTrait;
+
     /**
      * Constructor
      *
      * Sets check flag to false.
      */
-    public function __construct()
+    public function __construct(bool $useChecksum = false)
     {
+        $this->useChecksum = $useChecksum;
+        $this->checksumCallback = [$this, 'validateCode25Checksum'];
         $this->setLength('even');
         $this->setCharacters('0123456789');
-        $this->setChecksum('code25');
-        $this->setUseChecksum(false);
     }
 }

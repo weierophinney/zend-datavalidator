@@ -5,17 +5,23 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
-class Planet extends AbstractAdapter
+class Planet extends AbstractAdapter implements ChecksummableInterface
 {
+    use ChecksumTrait;
+    use PostnetChecksumTrait;
+
     /**
      * Constructor for this barcode adapter
      */
-    public function __construct()
+    public function __construct(bool $useChecksum = true)
     {
+        $this->useChecksum = $useChecksum;
+        $this->checksumCallback = [$this, 'validatePostnetChecksum'];
         $this->setLength([12, 14]);
         $this->setCharacters('0123456789');
-        $this->setChecksum('postnet');
     }
 }

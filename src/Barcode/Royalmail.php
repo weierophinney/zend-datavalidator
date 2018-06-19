@@ -5,11 +5,18 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
-class Royalmail extends AbstractAdapter
+class Royalmail extends AbstractAdapter implements ChecksummableInterface
 {
-    protected $rows = [
+    use ChecksumTrait;
+
+    /**
+     * @var int[]
+     */
+    private $rows = [
         '0' => 1, '1' => 1, '2' => 1, '3' => 1, '4' => 1, '5' => 1,
         '6' => 2, '7' => 2, '8' => 2, '9' => 2, 'A' => 2, 'B' => 2,
         'C' => 3, 'D' => 3, 'E' => 3, 'F' => 3, 'G' => 3, 'H' => 3,
@@ -18,7 +25,10 @@ class Royalmail extends AbstractAdapter
         'U' => 0, 'V' => 0, 'W' => 0, 'X' => 0, 'Y' => 0, 'Z' => 0,
      ];
 
-    protected $columns = [
+    /**
+     * @var int[]
+     */
+    private $columns = [
         '0' => 1, '1' => 2, '2' => 3, '3' => 4, '4' => 5, '5' => 0,
         '6' => 1, '7' => 2, '8' => 3, '9' => 4, 'A' => 5, 'B' => 0,
         'C' => 1, 'D' => 2, 'E' => 3, 'F' => 4, 'G' => 5, 'H' => 0,
@@ -30,20 +40,34 @@ class Royalmail extends AbstractAdapter
     /**
      * Constructor for this barcode adapter
      */
-    public function __construct()
+    public function __construct(bool $useChecksum = true)
     {
+        $this->useChecksum = $useChecksum;
+        $this->checksumCallback = [$this, 'validateRoyalmailChecksum'];
         $this->setLength(-1);
         $this->setCharacters('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-        $this->setChecksum('royalmail');
     }
 
     /**
-     * Validates the checksum ()
-     *
-     * @param  string $value The barcode to validate
-     * @return bool
+     * Allows start and stop tag within checked chars
      */
-    protected function royalmail($value)
+    public function hasValidCharacters(string $value) : bool
+    {
+        if ($value[0] === '(') {
+            if ($value[strlen($value) - 1] !== ')') {
+                return false;
+            }
+
+            $value = substr($value, 1, -1);
+        }
+
+        return parent::hasValidCharacters($value);
+    }
+
+    /**
+     * Validates the checksum
+     */
+    private function validateRoyalmailChecksum(string $value) : bool
     {
         $checksum = substr($value, -1, 1);
         $values   = str_split(substr($value, 0, -1));
@@ -59,31 +83,8 @@ class Royalmail extends AbstractAdapter
 
         $rowchkvalue = array_keys($this->rows, $rowvalue);
         $colchkvalue = array_keys($this->columns, $colvalue);
-        $intersect = array_intersect($rowchkvalue, $colchkvalue);
+        $intersect   = array_intersect($rowchkvalue, $colchkvalue);
         $chkvalue    = current($intersect);
-        if ($chkvalue == $checksum) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Allows start and stop tag within checked chars
-     *
-     * @param  string $value The barcode to check for allowed characters
-     * @return bool
-     */
-    public function hasValidCharacters($value) : bool
-    {
-        if ($value[0] === '(') {
-            if ($value[strlen($value) - 1] !== ')') {
-                return false;
-            }
-
-            $value = substr($value, 1, -1);
-        }
-
-        return parent::hasValidCharacters($value);
+        return $chkvalue === $checksum;
     }
 }

@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Barcode;
 
 class Codabar extends AbstractAdapter
@@ -16,14 +18,13 @@ class Codabar extends AbstractAdapter
     {
         $this->setLength(-1);
         $this->setCharacters('0123456789-$:/.+ABCDTN*E');
-        $this->setUseChecksum(false);
     }
 
     /**
      * Checks for allowed characters
-     * @see Zend\DataValidator\Barcode.AbstractAdapter::checkChars()
+     * @see Zend\DataValidator\Barcode\AbstractAdapter::checkChars()
      */
-    public function hasValidCharacters($value) : bool
+    public function hasValidCharacters(string $value) : bool
     {
         if (strpbrk($value, 'ABCD')) {
             $first = $value[0];
