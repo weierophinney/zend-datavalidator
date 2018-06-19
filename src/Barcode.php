@@ -67,36 +67,37 @@ class Barcode extends AbstractValidator
         }
 
         $adapter = $this->getAdapter();
-        $length  = $adapter->getLength();
-        $result  = $adapter->hasValidLength($value);
-        if (! $result) {
-            if (is_array($length)) {
-                $temp = $length;
-                $length = '';
-                foreach ($temp as $len) {
-                    $length .= '/' . $len;
-                }
-
-                $length = substr($length, 1);
-            }
-
-            $this->messageVariables['length'] = $length;
-
+        if (! $adapter->hasValidLength($value)) {
+            $this->messageVariables['length'] = $this->getAllowedLength($adapter);
             return $this->createInvalidResult($value, [self::INVALID_LENGTH]);
         }
 
-        $result = $adapter->hasValidCharacters($value);
-        if (! $result) {
+        if (! $adapter->hasValidCharacters($value)) {
             return $this->createInvalidResult($value, [self::INVALID_CHARS]);
         }
 
-        if ($adapter instanceof Barcode\ChecksummableInterface && $adapter->useChecksum($value)) {
-            $result = $adapter->hasValidChecksum($value);
-            if (! $result) {
-                return $this->createInvalidResult($value, [self::FAILED]);
-            }
+        if ($adapter instanceof Barcode\ChecksummableInterface
+            && $adapter->useChecksum($value)
+            && ! $adapter->hasValidChecksum($value)
+        ) {
+            return $this->createInvalidResult($value, [self::FAILED]);
         }
 
         return Result::createValidResult($value);
+    }
+
+    /**
+     * @return int|string If the adapter returns an array of values for the
+     *     length, they will be imploded with a "/" character and returned
+     *     as a string.
+     */
+    private function getAllowedLength(AdapterInterface $adapter)
+    {
+        $length = $adapter->getLength();
+        if (! is_array($length)) {
+            return $length;
+        }
+
+        return implode('/', $length);
     }
 }
