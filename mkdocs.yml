@@ -5,8 +5,9 @@ pages:
     - Introduction: intro.md
     - Validators:
       - Barcode: validators/barcode.md
+      - Date: validators/date.md
       - UUID: validators/uuid.md
-site_name: Component Name Goes Here
-site_description: 'Component Description goes here'
+site_name: zend-datavalidator
+site_description: 'General purpose, decoupled validation component.'
 repo_url: 'https://github.com/zendframework/zend-datavalidator'
 copyright: 'Copyright (c) 2017-2018 <a href="http://www.zend.com/">Zend Technologies USA Inc.</a>'
