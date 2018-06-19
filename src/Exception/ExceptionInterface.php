@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\DataValidator\Exception;
 
 /**
