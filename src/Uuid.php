@@ -12,13 +12,8 @@ namespace Zend\DataValidator;
  */
 final class Uuid extends AbstractValidator
 {
-    /**
-     * Matches Uuid's versions 1 to 5.
-     */
-    const REGEX_UUID = '/^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/';
-
-    const INVALID    = self::class . '::valueNotUuid';
-    const NOT_STRING = self::class . '::valueNotString';
+    public const INVALID    = self::class . '::valueNotUuid';
+    public const NOT_STRING = self::class . '::valueNotString';
 
     /**
      * @var array
@@ -27,6 +22,11 @@ final class Uuid extends AbstractValidator
         self::NOT_STRING => 'Invalid type given; string expected',
         self::INVALID => 'Invalid UUID format',
     ];
+
+    /**
+     * Matches Uuid's versions 1 to 5.
+     */
+    private const REGEX_UUID = '/^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/';
 
     /**
       * Returns true if and only if $value is between min and max options, inclusively

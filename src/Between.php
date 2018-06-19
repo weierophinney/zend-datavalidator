@@ -9,8 +9,8 @@ namespace Zend\DataValidator;
 
 final class Between extends AbstractValidator
 {
-    const NOT_BETWEEN        = self::class . '::notBetween';
-    const NOT_BETWEEN_STRICT = self::class . '::notBetweenStrict';
+    public const NOT_BETWEEN        = self::class . '::notBetween';
+    public const NOT_BETWEEN_STRICT = self::class . '::notBetweenStrict';
 
     /**
      * Validation failure message template definitions

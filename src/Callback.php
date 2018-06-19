@@ -17,7 +17,7 @@ namespace Zend\DataValidator;
  */
 final class Callback extends AbstractValidator
 {
-    const INVALID = self::class . '::invalid';
+    public const INVALID = self::class . '::invalid';
 
     /**
      * Validation failure message template definitions

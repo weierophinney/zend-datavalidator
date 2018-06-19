@@ -14,10 +14,10 @@ use Zend\DataValidator\Barcode\AdapterInterface;
 
 class Barcode extends AbstractValidator
 {
-    const INVALID        = self::class . '::invalidValue';
-    const FAILED         = self::class . '::failedChecksum';
-    const INVALID_CHARS  = self::class . '::invalidChars';
-    const INVALID_LENGTH = self::class . '::invalidLength';
+    public const INVALID        = self::class . '::invalidValue';
+    public const FAILED         = self::class . '::failedChecksum';
+    public const INVALID_CHARS  = self::class . '::invalidChars';
+    public const INVALID_LENGTH = self::class . '::invalidLength';
 
     /**
      * Validation failure message template definitions
