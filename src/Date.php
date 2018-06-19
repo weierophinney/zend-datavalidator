@@ -128,7 +128,7 @@ class Date extends AbstractValidator
      */
     private function convertDouble(float $value)
     {
-        return DateTime::createFromFormat('U', $value);
+        return DateTime::createFromFormat('U', (string) $value);
     }
 
     /**
