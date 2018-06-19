@@ -9,16 +9,18 @@ declare(strict_types=1);
 
 namespace Zend\DataValidator\Barcode;
 
-/**
- * @todo Should this allow checksum validation?
- */
-class Code93ext extends AbstractAdapter
+class Code93ext extends AbstractAdapter implements ChecksummableInterface
 {
+    use ChecksumTrait;
+    use Code93ChecksumTrait;
+
     /**
      * Constructor for this barcode adapter
      */
-    public function __construct()
+    public function __construct(bool $useChecksum = false)
     {
+        $this->useChecksum = $useChecksum;
+        $this->checksumCallback = [$this, 'validateCode93Checksum'];
         $this->setLength(-1);
         $this->setCharacters(128);
     }

@@ -157,6 +157,11 @@ class BarcodeTest extends TestCase
         $this->validateResult($barcode->validate('TEST93TEST93TEST93TEST93Y+'), true);
         $this->validateResult($barcode->validate('00075678164124'), true);
         $this->validateResult($barcode->validate('Test93Test93Test'), true);
+
+        // using checksum:
+        $barcode = new Barcode(new Barcode\Code39ext(true));
+        $this->validateResult($barcode->validate('159AZH'), true);
+        $this->validateResult($barcode->validate('159AZü'), false);
     }
 
     public function testCODE93()
@@ -176,6 +181,11 @@ class BarcodeTest extends TestCase
         $barcode = new Barcode(new Barcode\Code93ext());
         $this->validateResult($barcode->validate('TEST93+'), true);
         $this->validateResult($barcode->validate('Test93+'), true);
+
+        // using checksum:
+        $barcode = new Barcode(new Barcode\Code93ext(true));
+        $this->validateResult($barcode->validate('CODE 93E0'), true);
+        $this->validateResult($barcode->validate('CODE 9éE1'), false);
     }
 
     public function testEAN2()
