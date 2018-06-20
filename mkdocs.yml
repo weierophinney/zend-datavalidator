@@ -6,6 +6,7 @@ pages:
     - Validators:
       - Barcode: validators/barcode.md
       - Date: validators/date.md
+      - NotEmpty: validators/not-empty.md
       - UUID: validators/uuid.md
 site_name: zend-datavalidator
 site_description: 'General purpose, decoupled validation component.'
