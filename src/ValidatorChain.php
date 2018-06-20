@@ -52,19 +52,32 @@ final class ValidatorChain implements ValidatorInterface
     {
         $results = new ResultAggregate($value);
 
-        foreach ($this->validators as $element) {
-            $validator = $element['instance'];
-            $result = $validator->validate($value, $context);
+        foreach ($this->iterateValidators($value, $context) as $result) {
             $results->push($result);
-            if ($result->isValid()) {
-                continue;
-            }
-
-            if ($element['breakChainOnFailure']) {
-                break;
-            }
         }
 
         return $results;
+    }
+
+    /**
+     * Iterate through each validator and validate the value against its context.
+     *
+     * Yields ResultInterface instances.
+     *
+     * @param mixed $value Value to validate
+     * @param object|array|mixed $context Validation context (e.g., set of
+     *     other form elements)
+     */
+    private function iterateValidators($value, $context) : iterable
+    {
+        foreach ($this->validators as $element) {
+            $validator = $element['instance'];
+            $result = $validator->validate($value, $context);
+            yield $result;
+
+            if (! $result->isValid() && $element['breakChainOnFailure']) {
+                return;
+            }
+        }
     }
 }

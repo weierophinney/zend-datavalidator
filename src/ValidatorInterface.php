@@ -11,5 +11,10 @@ namespace Zend\DataValidator;
 
 interface ValidatorInterface
 {
+    /**
+     * @param mixed $value Value to validate
+     * @param object|array|mixed $context Validation context (e.g., set of
+     *     other form elements)
+     */
     public function validate($value, $context = null) : ResultInterface;
 }
