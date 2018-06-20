@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-datavalidator for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-datavalidator/blob/master/LICENSE.md New BSD License
  */
 
@@ -38,10 +38,7 @@ final class ResultAggregate implements ResultInterface
         $this->assertAggregateNotEmpty();
 
         return array_reduce($this->results, function ($isValid, $result) {
-            if ($isValid === false) {
-                return false;
-            }
-            return $result->isValid();
+            return $isValid === false ? false : $result->isValid();
         }, null);
     }
 
@@ -53,10 +50,9 @@ final class ResultAggregate implements ResultInterface
         $this->assertAggregateNotEmpty();
 
         return array_reduce($this->results, function ($messages, $result) {
-            if ($result->isValid()) {
-                return $messages;
-            }
-            return array_merge($messages, $result->getMessages());
+            return $result->isValid()
+                ? $messages
+                : array_merge($messages, $result->getMessages());
         }, []);
     }
 
