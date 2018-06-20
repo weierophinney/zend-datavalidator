@@ -22,7 +22,7 @@ final class ValidatorChain implements ValidatorInterface
      *
      * @var array
      */
-    protected $validators = [];
+    private $validators = [];
 
     /**
      * Append a validator to the chain
