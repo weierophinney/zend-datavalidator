@@ -11,6 +11,8 @@
 
 This library provides general purpose, stateless validation for PHP values.
 
+Design document: https://discourse.zendframework.com/t/rfc-new-validation-component/208
+
 ## Installation
 
 Run the following to install this library:
