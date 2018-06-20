@@ -69,16 +69,21 @@ final class NotEmpty extends AbstractValidator
     /**
      * Default types allowed; value = 0b000111101001
      *
-     * @var array
+     * @var int
      */
-    private $defaultTypeMask = [
-        self::OBJECT,
-        self::SPACE,
-        self::NULL,
-        self::EMPTY_ARRAY,
-        self::STRING,
-        self::BOOLEAN
-    ];
+    private $defaultTypeMask = self::OBJECT
+        | self::SPACE
+        | self::NULL
+        | self::EMPTY_ARRAY
+        | self::STRING
+        | self::BOOLEAN;
+
+    /**
+     * Mask of all object types; value = 0b011100000000;
+     *
+     * @var int
+     */
+    private $objectMask = self::OBJECT | self::OBJECT_COUNT | self::OBJECT_STRING;
 
     /**
      * @var int Type mask of allowed types that can represent empty values.
@@ -124,6 +129,16 @@ final class NotEmpty extends AbstractValidator
             return $this->createInvalidResult($value, [self::INVALID]);
         }
 
+        // SPACE|ZERO|STRING (' ', '0', '')
+        if (is_string($value)) {
+            return $this->validateStringValue($value);
+        }
+
+        // OBJECT|OBJECT_STRING|OBJECT_INT
+        if (is_object($value)) {
+            return $this->validateObjectValue($value);
+        }
+
         // NULL (null)
         if ($this->typeMask & self::NULL
             && null === $value
@@ -157,16 +172,6 @@ final class NotEmpty extends AbstractValidator
             && $value === 0
         ) {
             return $this->createInvalidResult($value, [self::IS_EMPTY]);
-        }
-
-        // SPACE|ZERO|STRING (' ', '0', '')
-        if (is_string($value)) {
-            return $this->validateStringValue($value);
-        }
-
-        // OBJECT|OBJECT_STRING|OBJECT_INT
-        if (is_object($value)) {
-            return $this->validateObjectValue($value);
         }
 
         return Result::createValidResult($value);
@@ -210,29 +215,33 @@ final class NotEmpty extends AbstractValidator
      */
     private function validateObjectValue($value) : ResultInterface
     {
-        // Object-as-integer, but counting results in zero.
+        // Object-as-integer, but object is not countable,
+        // or counting results in zero.
         if ($this->typeMask & self::OBJECT_COUNT
-            && $value instanceof Countable
-            && count($value) === 0
+            && (! $value instanceof Countable
+                || count($value) === 0
+            )
         ) {
             return $this->createInvalidResult($value, [self::IS_EMPTY]);
         }
 
-        // Object-as-string, but results in empty string.
+        // Object-as-string, but object is not string serializable,
+        // or serialization results in empty string.
         if ($this->typeMask & self::OBJECT_STRING
-            && (! method_exists($value, '__toString') || (string) $value === '')
+            && (! method_exists($value, '__toString')
+                || (string) $value === ''
+            )
         ) {
             return $this->createInvalidResult($value, [self::IS_EMPTY]);
         }
 
-        // Objects (including countable and string represenatations) are
-        // allowed; objects are never empty, so valid
-        $objectMask = self::OBJECT | self::OBJECT_COUNT | self::OBJECT_STRING;
-        if ($this->typeMask & $objectMask) {
+        // Object, object-as-integer, or object-as-string: objects
+        // are never considered empty on their own, so these are valid:
+        if ($this->typeMask & $this->objectMask) {
             return Result::createValidResult($value);
         }
 
-        // Objects are not allowed, but we have one.
+        // Objects are not allowed, but we have one; invalid.
         return $this->createInvalidResult($value, [self::IS_EMPTY]);
     }
 
