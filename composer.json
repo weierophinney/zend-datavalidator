@@ -1,9 +1,10 @@
 {
     "name": "zendframework/zend-datavalidator",
-    "description": "Description of project goes here",
+    "description": "General purpose, stateless data validation for PHP values.",
     "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
+        "validation",
         "components",
         "zf",
         "zendframework"
@@ -22,7 +23,7 @@
         "php": "^7.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0.8",
+        "phpunit/phpunit": "^7.0.1",
         "zendframework/zend-coding-standard": "^1.0",
         "zendframework/zend-validator": "^2.10.1"
     },
@@ -49,7 +50,6 @@
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit --colors=always",
-        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
-        "upload-coverage": "coveralls -v"
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }
 }
